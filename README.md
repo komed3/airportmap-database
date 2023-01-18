@@ -1,2 +1,3 @@
-# airportmap-database
- Airportmap project structure & data
+# Airportmap database
+
+[Airportmap](https://github.com/komed3/airportmap) project structure & data
