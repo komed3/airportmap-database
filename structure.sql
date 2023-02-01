@@ -29,18 +29,13 @@ CREATE TABLE `airport` (
 
 CREATE TABLE `continent` (
   `code` varbinary(2) NOT NULL,
-  `name` varbinary(256) NOT NULL,
-  `lat` double NOT NULL,
-  `lon` double NOT NULL
+  `name` varbinary(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 CREATE TABLE `country` (
   `code` varbinary(2) NOT NULL,
   `name` varbinary(256) NOT NULL,
-  `continent` varbinary(2) DEFAULT NULL,
-  `lat` double NOT NULL,
-  `lon` double NOT NULL,
-  `zoom` int NOT NULL DEFAULT '5'
+  `continent` varbinary(2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 CREATE TABLE `frequency` (
@@ -48,6 +43,12 @@ CREATE TABLE `frequency` (
   `airport` varbinary(8) NOT NULL,
   `type` varbinary(32) NOT NULL,
   `frequency` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE `ICAO` (
+  `code` varbinary(2) NOT NULL,
+  `name` varbinary(256) NOT NULL,
+  `regions` blob
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 CREATE TABLE `image` (
@@ -171,6 +172,36 @@ CREATE TABLE `timezone` (
   `name` varbinary(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+CREATE TABLE `traffic` (
+  `ident` varbinary(16) NOT NULL,
+  `callsign` varbinary(16) DEFAULT NULL,
+  `type` tinyint NOT NULL DEFAULT '0',
+  `timestamp` datetime DEFAULT NULL,
+  `contact` datetime NOT NULL,
+  `origin` varbinary(32) NOT NULL,
+  `lat` float DEFAULT NULL,
+  `lon` float DEFAULT NULL,
+  `alt` int DEFAULT NULL,
+  `alt_geo` float DEFAULT NULL,
+  `hdg` float DEFAULT NULL,
+  `velocity` float DEFAULT NULL,
+  `vrate` float NOT NULL DEFAULT '0',
+  `ground` tinyint(1) NOT NULL DEFAULT '0',
+  `squawk` varbinary(16) DEFAULT NULL,
+  `spi` tinyint(1) NOT NULL DEFAULT '0',
+  `source` tinyint(1) NOT NULL,
+  `tier` int NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE `waypoint` (
+  `_id` int NOT NULL,
+  `ident` varbinary(8) NOT NULL,
+  `lat` double NOT NULL,
+  `lon` double NOT NULL,
+  `code` varbinary(8) DEFAULT NULL,
+  `prefix` varbinary(2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
 
 ALTER TABLE `airport`
   ADD PRIMARY KEY (`ICAO`),
@@ -197,6 +228,10 @@ ALTER TABLE `frequency`
   ADD PRIMARY KEY (`_id`),
   ADD KEY `airport` (`airport`),
   ADD KEY `type` (`type`);
+
+ALTER TABLE `ICAO`
+  ADD PRIMARY KEY (`code`),
+  ADD KEY `region` (`name`);
 
 ALTER TABLE `image`
   ADD PRIMARY KEY (`_id`),
@@ -234,6 +269,15 @@ ALTER TABLE `timezone`
   ADD PRIMARY KEY (`ident`),
   ADD UNIQUE KEY `timezone` (`short`,`gmt_offset`);
 
+ALTER TABLE `traffic`
+  ADD PRIMARY KEY (`ident`);
+
+ALTER TABLE `waypoint`
+  ADD PRIMARY KEY (`_id`),
+  ADD KEY `ident` (`ident`),
+  ADD KEY `prefix` (`prefix`),
+  ADD KEY `code` (`code`);
+
 
 ALTER TABLE `frequency`
   MODIFY `_id` int NOT NULL AUTO_INCREMENT;
@@ -245,6 +289,9 @@ ALTER TABLE `navaid`
   MODIFY `_id` int NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `runway`
+  MODIFY `_id` int NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `waypoint`
   MODIFY `_id` int NOT NULL AUTO_INCREMENT;
 
 
