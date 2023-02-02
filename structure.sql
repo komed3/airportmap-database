@@ -117,6 +117,16 @@ CREATE TABLE `region` (
   `country` varbinary(2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+CREATE TABLE `revision` (
+  `_id` int NOT NULL,
+  `user` int NOT NULL,
+  `type` varbinary(32) NOT NULL,
+  `content` blob NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  `viewer` int NOT NULL,
+  `_touched` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
 CREATE TABLE `runway` (
   `_id` int NOT NULL,
   `airport` varbinary(8) NOT NULL,
@@ -193,6 +203,16 @@ CREATE TABLE `traffic` (
   `tier` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+CREATE TABLE `user` (
+  `_id` int NOT NULL,
+  `username` varbinary(256) NOT NULL,
+  `password` blob NOT NULL,
+  `email` varbinary(256) NOT NULL,
+  `registration` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `editcount` int NOT NULL DEFAULT '0',
+  `role` varbinary(32) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
 CREATE TABLE `waypoint` (
   `_id` int NOT NULL,
   `ident` varbinary(8) NOT NULL,
@@ -255,6 +275,9 @@ ALTER TABLE `region`
   ADD KEY `continent` (`continent`),
   ADD KEY `country` (`country`);
 
+ALTER TABLE `revision`
+  ADD PRIMARY KEY (`_id`);
+
 ALTER TABLE `runway`
   ADD PRIMARY KEY (`_id`),
   ADD KEY `airport` (`airport`),
@@ -272,6 +295,12 @@ ALTER TABLE `timezone`
 ALTER TABLE `traffic`
   ADD PRIMARY KEY (`ident`);
 
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`_id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `role` (`role`);
+
 ALTER TABLE `waypoint`
   ADD PRIMARY KEY (`_id`),
   ADD KEY `ident` (`ident`),
@@ -288,7 +317,13 @@ ALTER TABLE `image`
 ALTER TABLE `navaid`
   MODIFY `_id` int NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE `revision`
+  MODIFY `_id` int NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `runway`
+  MODIFY `_id` int NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `user`
   MODIFY `_id` int NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `waypoint`
